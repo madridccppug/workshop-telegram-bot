@@ -13,7 +13,7 @@ int main() {
     const char* token = std::getenv("MADRIDCCPPUG_BOT_TOKEN");
     const char* wnet_data = std::getenv("WORDNET_DATA_PATH");
     if (!token or !wnet_data) {
-        std::cerr << "Provide env variables MADRIDCCPPUG_BOT_TOKEN and WORDNET_DATA_PATH\n";
+        std::cerr << "Provide env variables MADRIDCCPPUG_BOT_TOKEN and WORDNET_DATA_PATH (path to dict folder)\n";
         return 1;
     }
 
