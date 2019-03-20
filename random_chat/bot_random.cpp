@@ -51,7 +51,6 @@ void BotRandom::run() {
     
     TgBot::TgLongPoll longPoll(_bot);
     while (true) {
-        //fmt::print("Long poll started\n");
         longPoll.start();
     }
 }
