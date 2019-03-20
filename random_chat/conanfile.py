@@ -3,7 +3,7 @@ import os
 from conans import ConanFile, CMake, tools
 
 
-class TelegramWordnet(ConanFile):
+class RandomChat(ConanFile):
     settings = "os", "compiler", "build_type", "arch", "cppstd"
     generators = "cmake"
 
