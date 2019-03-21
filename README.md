@@ -5,7 +5,7 @@
 In these examples we are demonstrating how to build a Telegram bot using the library
 developed by @reo7sp: [tgbot-cpp](https://github.com/reo7sp/tgbot-cpp)
 
-Slides corresponding to the [workshop on March 21th](https://docs.google.com/presentation/d/1B5pPftL06dW1k87M5eyMk-MwfkqXWhzXmXrN0kKP0dk/edit?usp=sharing)
+:orange_book: Slides corresponding to the [workshop on March 21th](https://docs.google.com/presentation/d/1B5pPftL06dW1k87M5eyMk-MwfkqXWhzXmXrN0kKP0dk/edit?usp=sharing)
 by Madrid C/C++ User Group 
 
 ### Prerrequisites
