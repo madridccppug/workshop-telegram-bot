@@ -14,7 +14,7 @@ int main() {
         return 1;
     }
 
-    BotRandom bot(token);
+    BotRandom bot(token, "users.txt");
 
     try {
         bot.run();

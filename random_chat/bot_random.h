@@ -9,7 +9,7 @@ class BotRandom {
 public:
     enum class Status {AVAILABLE, MATCHED, UNAVAILABLE};
 public:
-    BotRandom(const char* token);
+    BotRandom(const char* token, const std::string& db_filename);
     
     void run();
     
@@ -26,8 +26,9 @@ protected:
 protected:
     TgBot::Bot _bot;
     std::map<int32_t, std::string> _users; // Users by chat id
+    const std::string _db_filename;
     
     boost::bimap<int32_t, int32_t> _matches;  // Active pairs
-    std::map<int32_t, Status> _status;
+    std::map<int32_t, Status> _status;  // Users status (available, matched, unavailable)
     
 };
