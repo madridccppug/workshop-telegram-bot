@@ -58,8 +58,10 @@ void BotRandom::run() {
         fmt::print("User from DB: @{}\n", username);
         _users.insert(std::make_pair(id, username));
         _status.insert(std::make_pair(id, Status::AVAILABLE));
-
-        this->bot_says(id, "I'm back! Use /start to connect with someone.'");
+        try {
+            this->bot_says(id, "I'm back! Use /start to connect with someone.'");
+        }
+        catch(...) {}
     }
 
     // Launch the bot
@@ -91,45 +93,48 @@ void BotRandom::start(TgBot::Message::Ptr message) {
     }
     fmt::print("{}: /start\n", username);
     
-    // Store username
-    _users[message->chat->id] = username;
+    try {
+        // Store username
+        _users[message->chat->id] = username;
 
-    // Dump to file
-    std::ofstream myfile;
-    myfile.open(_db_filename);
-    for (const auto& item: _users) {
-        myfile << item.first << " " << item.second << "\n"; 
-    }
-    myfile.close();
+        // Dump to file
+        std::ofstream myfile;
+        myfile.open(_db_filename);
+        for (const auto& item: _users) {
+            myfile << item.first << " " << item.second << "\n"; 
+        }
+        myfile.close();
 
-    // Unlink from previous conversation (this user will become unavailable)
-    this->stop(message, false);
-    
-    // Search for a new match
-    std::vector<int32_t> availables;
-    for (const auto& item: _status) {
-        if (item.second == Status::AVAILABLE) {
-            availables.push_back(item.first);
+        // Unlink from previous conversation (this user will become unavailable)
+        this->stop(message, false);
+        
+        // Search for a new match
+        std::vector<int32_t> availables;
+        for (const auto& item: _status) {
+            if (item.second == Status::AVAILABLE) {
+                availables.push_back(item.first);
+            }
+        }
+        if (!availables.empty()) {
+            // Get one randomly
+            auto it = select_randomly(availables.begin(), availables.end());
+            assert(it != availables.end());
+            
+            // Pair the users: store the match
+            _matches.left.insert(std::make_pair(message->chat->id, *it));
+            _status[message->chat->id] = Status::MATCHED;
+            _status[*it] = Status::MATCHED;
+
+            // Send a message to the users so they know they have been matched!
+            this->bot_says(message->chat->id, "You have been matched with " + _users[*it] + ". Say hi!");
+            this->bot_says(*it, _users[message->chat->id] + " has been matched with you!");
+        }
+        else {
+            this->bot_says(message->chat->id, "There aren't users available, we are waiting for one");
+            _status[message->chat->id] = Status::AVAILABLE;
         }
     }
-    if (!availables.empty()) {
-        // Get one randomly
-        auto it = select_randomly(availables.begin(), availables.end());
-        assert(it != availables.end());
-        
-        // Pair the users: store the match
-        _matches.left.insert(std::make_pair(message->chat->id, *it));
-        _status[message->chat->id] = Status::MATCHED;
-        _status[*it] = Status::MATCHED;
-
-        // Send a message to the users so they know they have been matched!
-        this->bot_says(message->chat->id, "You have been matched with " + _users[*it] + ". Say hi!");
-        this->bot_says(*it, _users[message->chat->id] + " has been matched with you!");
-    }
-    else {
-        this->bot_says(message->chat->id, "There aren't users available, we are waiting for one");
-        _status[message->chat->id] = Status::AVAILABLE;
-    }
+    catch(...) {}
 }
 
 void BotRandom::stop(TgBot::Message::Ptr message, bool direct_command) {
